@@ -1,0 +1,22 @@
+# Build output and binaries are shipped as Release assets, never committed.
+*.dll
+*.pdb
+*.exe
+*.zip
+
+# Local backups of the stock driver
+*.stock-backup
+stock/
+
+# Build trees
+build/
+target/
+deps/
+
+# Editor / OS noise
+.vs/
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+*.swp
