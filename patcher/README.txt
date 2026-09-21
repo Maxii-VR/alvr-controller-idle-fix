@@ -198,9 +198,15 @@ The patch disappeared after an ALVR update
     only if the new version is still v20.14.1.
 
 
-LICENSE / SOURCE
-----------------
+CREDITS / LICENSE / SOURCE
+-------------------------
 ALVR is by the alvr-org project:  https://github.com/alvr-org/ALVR
+Essentially all of the engineering here is theirs -- this is a 173-line
+change to their work. Please go support the upstream project.
+
+Patch, installer and docs written with Claude Code (Opus 5); tested on real
+hardware by Maxii-VR.
+
 This is ALVR v20.14.1 with a local modification, built with the --gpl
 option, which links GPL-licensed FFmpeg. The resulting binary is therefore
 covered by the GPL, and the corresponding source is:

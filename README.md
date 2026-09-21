@@ -6,6 +6,12 @@ A one-file patch for [ALVR](https://github.com/alvr-org/ALVR) v20.14.1 on Window
 Your hand stays exactly where you left the controller instead of snapping back to
 the avatar's default pose.
 
+> **Built on [ALVR](https://github.com/alvr-org/ALVR)**, the open-source streamer
+> that makes wireless PCVR on standalone headsets work at all. This repository is a
+> 173-line change to their work — essentially all of the engineering here is
+> theirs. If you find this useful, go star [alvr-org/ALVR](https://github.com/alvr-org/ALVR)
+> first. Unofficial, and not endorsed by or affiliated with the project.
+
 ---
 
 ## Does this sound familiar?
@@ -200,11 +206,32 @@ git apply path\to\alvr-idle-hold-v20.14.1.patch
 cargo xtask build-streamer --release --gpl
 ```
 
-## License and credits
+## Credits
 
-All credit for ALVR goes to the [alvr-org](https://github.com/alvr-org/ALVR)
-project and its contributors. This repository is a small modification of their
-work and is not affiliated with or endorsed by them.
+**[ALVR](https://github.com/alvr-org/ALVR) — [alvr-org](https://github.com/alvr-org)
+and its contributors, and [polygraphene](https://github.com/polygraphene) before
+them.** Everything that makes wireless PCVR work is theirs; this repository changes
+173 lines of it. Please support the upstream project:
+
+- [alvr-org/ALVR](https://github.com/alvr-org/ALVR) — the streamer itself
+- [Report ALVR bugs upstream](https://github.com/alvr-org/ALVR/issues) — but
+  **uninstall this patch first** and confirm the problem is still there
+
+The right long-term home for this fix is upstream, not here. A patched DLL has to
+be rebuilt for every ALVR release; a fix in ALVR itself would not.
+
+Also built on [FFmpeg](https://ffmpeg.org/) and [x264](https://www.videolan.org/developers/x264.html),
+which the released binary links — see [NOTICE.md](NOTICE.md).
+
+### Acknowledgements
+
+The patch, installer and documentation were written with
+[Claude Code](https://claude.com/claude-code) (Opus 5), working from the original
+symptom report and driving the diagnosis through ALVR's source. Tested on real
+hardware by [@Maxii-VR](https://github.com/Maxii-VR) — including finding the bug
+that a sandbox never would.
+
+## License
 
 The patch and scripts here are MIT, matching ALVR. The **released binary** links
 GPL-licensed FFmpeg and x264 and is therefore distributed under the GPL — see
