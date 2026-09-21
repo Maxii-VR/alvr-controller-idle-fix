@@ -15,7 +15,7 @@
 **Estimated time:** ~10 min setup + ~3 min compile
 
 > **If you just want the fix, you do not need this document.** Use the
-> ready-made patcher in `C:\Tools\Workspace\ALVR-IdleHold-Patcher\` — double-click
+> ready-made patcher in the release zip — double-click
 > `INSTALL.bat`. This document is for *rebuilding* the patch from source, which is
 > only needed when ALVR releases a new version.
 
@@ -87,10 +87,10 @@ The patch holds the last good pose instead of reporting a disconnect.
    python -m pip download libclang --only-binary=:all: --dest $env:TEMP\libclang-dl --no-deps
    # rename the .whl to .zip, extract, then:
    #   <extracted>\libclang-*.data\platlib\clang\native\libclang.dll
-   # copy it to C:\Tools\libclang\bin\libclang.dll
+   # copy it to C:\libclang\bin\libclang.dll
    ```
 
-   Then set `LIBCLANG_PATH=C:\Tools\libclang\bin` for the build shell.
+   Then set `LIBCLANG_PATH=C:\libclang\bin` for the build shell.
 
 5. Close and reopen PowerShell, then verify:
    ```powershell
@@ -106,7 +106,7 @@ The patch holds the last good pose instead of reporting a disconnect.
 ## 3. Get the source (exact version)
 
 ```powershell
-cd C:\Tools
+cd C:\
 git clone --recurse-submodules --branch v20.14.1 https://github.com/alvr-org/ALVR.git ALVR-build
 cd ALVR-build
 git submodule update --init --checkout --recursive
@@ -119,13 +119,13 @@ build needs the bundled `openvr` submodule.
 
 ## 4. Apply the patch
 
-The patch file is at `C:\Tools\Workspace\alvr-idle-hold-v20.14.1-FINAL.patch`
+The patch file is at `patch\alvr-idle-hold-v20.14.1.patch`
 (full text also in Appendix A below).
 
 ```powershell
-cd C:\Tools\ALVR-build
-git apply --check C:\Tools\Workspace\alvr-idle-hold-v20.14.1-FINAL.patch
-git apply         C:\Tools\Workspace\alvr-idle-hold-v20.14.1-FINAL.patch
+cd C:\ALVR-build
+git apply --check patch\alvr-idle-hold-v20.14.1.patch
+git apply         patch\alvr-idle-hold-v20.14.1.patch
 git diff --stat
 ```
 
@@ -147,9 +147,9 @@ If `git apply --check` fails, STOP — the checked-out version is not v20.14.1.
 ## 5. Build
 
 ```powershell
-cd C:\Tools\ALVR-build
+cd C:\ALVR-build
 $env:PATH = "$env:USERPROFILE\.cargo\bin;C:\Program Files\Git\usr\bin;$env:PATH"
-$env:LIBCLANG_PATH = "C:\Tools\libclang\bin"
+$env:LIBCLANG_PATH = "C:\libclang\bin"
 
 cargo xtask prepare-deps --platform windows --ci
 cargo xtask build-streamer --release --gpl
@@ -173,7 +173,7 @@ Note the two additions to the original instructions:
 
 **Build output:**
 ```
-C:\Tools\ALVR-build\build\alvr_streamer_windows\bin\win64\driver_alvr_server.dll
+C:\ALVR-build\build\alvr_streamer_windows\bin\win64\driver_alvr_server.dll
 ```
 
 Clean build took **3m 13s**. It should compile with **zero warnings from the
@@ -189,19 +189,19 @@ patch** — the only warnings are pre-existing `f32`/`f64` ones in `alvr_dashboa
 2. **Back up the whole installation folder:**
    ```powershell
    Copy-Item -Recurse "C:\Program Files\alvr_launcher_windows\installations\v20.14.1" `
-                      "C:\Tools\alvr-v20.14.1-BACKUP"
+                      "C:\alvr-backup"
    ```
    Verify the copy before trusting it:
    ```powershell
    $a = Get-ChildItem "C:\Program Files\alvr_launcher_windows\installations\v20.14.1" -Recurse -File | Measure-Object Length -Sum
-   $b = Get-ChildItem "C:\Tools\alvr-v20.14.1-BACKUP" -Recurse -File | Measure-Object Length -Sum
+   $b = Get-ChildItem "C:\alvr-backup" -Recurse -File | Measure-Object Length -Sum
    "$($a.Count)/$($a.Sum)  vs  $($b.Count)/$($b.Sum)"   # must match; was 22 files / 280533936 bytes
    ```
 
 3. **Copy in the patched driver only** (leave every other file alone).
    This step **requires Administrator** — it writes to `Program Files`:
    ```powershell
-   Copy-Item "C:\Tools\ALVR-build\build\alvr_streamer_windows\bin\win64\driver_alvr_server.dll" `
+   Copy-Item "C:\ALVR-build\build\alvr_streamer_windows\bin\win64\driver_alvr_server.dll" `
              "C:\Program Files\alvr_launcher_windows\installations\v20.14.1\bin\win64\driver_alvr_server.dll" -Force
    ```
 
@@ -286,7 +286,7 @@ if ($t.Contains("source inactive, holding last pose")) { "PATCHED" } else { "STO
 Requires Administrator.
 
 ```powershell
-Copy-Item -Recurse -Force "C:\Tools\alvr-v20.14.1-BACKUP\*" `
+Copy-Item -Recurse -Force "C:\alvr-backup\*" `
           "C:\Program Files\alvr_launcher_windows\installations\v20.14.1\"
 ```
 
@@ -387,8 +387,8 @@ signature not found" — a confusing error that has nothing to do with your setu
 ```powershell
 $url = "https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2026-07-31-14-10/ffmpeg-n7.1.5-12-g1fdbca85aa-win64-gpl-shared-7.1.zip"
 Invoke-WebRequest $url -OutFile "$env:TEMP\ffmpeg71.zip" -UseBasicParsing
-Expand-Archive "$env:TEMP\ffmpeg71.zip" -DestinationPath "C:\Tools\ALVR-build\deps\windows" -Force
-Rename-Item "C:\Tools\ALVR-build\deps\windows\ffmpeg-n7.1.5-12-g1fdbca85aa-win64-gpl-shared-7.1" "ffmpeg"
+Expand-Archive "$env:TEMP\ffmpeg71.zip" -DestinationPath "C:\ALVR-build\deps\windows" -Force
+Rename-Item "C:\ALVR-build\deps\windows\ffmpeg-n7.1.5-12-g1fdbca85aa-win64-gpl-shared-7.1" "ffmpeg"
 ```
 
 **You must stay on 7.1.x.** The soname suffixes are what matter:
@@ -598,11 +598,11 @@ if (enabled) {
 | OS | Windows 11 Pro 10.0.26200 |
 | Rust | stable 1.98.1 (x86_64-pc-windows-msvc) |
 | MSVC | Visual Studio 2022 Community, VC.Tools.x86.x64 |
-| libclang | 18.1.1 (PyPI wheel) at `C:\Tools\libclang\bin` |
+| libclang | 18.1.1 (PyPI wheel) at `C:\libclang\bin` |
 | unzip | `C:\Program Files\Git\usr\bin\unzip.exe` (Git 2.55.0) |
 | x264 | 0.164.r3086 msvc16 |
 | FFmpeg | n7.1.5-12-g1fdbca85aa win64-gpl-shared |
-| Source | `C:\Tools\ALVR-build` @ tag `v20.14.1` |
+| Source | `C:\ALVR-build` @ tag `v20.14.1` |
 | Build time | 3m 13s clean, 7s incremental |
 
 **Driver imports** — the patched DLL's dependency set is byte-for-byte identical
